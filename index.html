@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Browser with Tabs (Internal Bing)</title>
+  <title>Custom Browser with Tabs</title>
   <style>
     body {
       margin: 0;
@@ -77,8 +77,8 @@
 
   <!-- Browser Header -->
   <div class="browser-header">
-    <input type="text" id="urlInput" placeholder="Enter Search Query">
-    <button onclick="navigate()">Search</button>
+    <input type="text" id="urlInput" placeholder="Enter Search Query or URL">
+    <button onclick="navigate()">Go</button>
     <button onclick="addTab()">New Tab</button>
     <button onclick="closeTab()">Close Tab</button>
   </div>
@@ -92,28 +92,30 @@
 
   <script>
     let currentTabIndex = 0;
+    let tabCount = 1;
 
     // Function to add a new tab
     function addTab() {
       const tabList = document.getElementById("tabList");
       const tabContentContainer = document.getElementById("tabContentContainer");
 
-      const newTabIndex = tabList.children.length;
+      const newTabIndex = tabCount++;
 
       // Create new tab in the navigation bar
       const newTab = document.createElement("li");
-      newTab.textContent = `Tab ${newTabIndex + 1}`;
-      newTab.onclick = () => switchTab(newTabIndex);
+      newTab.textContent = `Tab ${newTabIndex}`;
+      newTab.onclick = () => switchTab(newTabIndex - 1);
       tabList.appendChild(newTab);
 
       // Create new tab content with Bing's homepage
       const newTabContent = document.createElement("div");
       newTabContent.className = "tab-content";
-      newTabContent.innerHTML = `<iframe class="iframe-container" src="https://www.bing.com" id="iframe-${newTabIndex}"></iframe>`;
+      newTabContent.id = `tab-${newTabIndex - 1}`;
+      newTabContent.innerHTML = `<iframe class="iframe-container" src="https://www.bing.com" id="iframe-${newTabIndex - 1}"></iframe>`;
       tabContentContainer.appendChild(newTabContent);
 
       // Switch to the new tab
-      switchTab(newTabIndex);
+      switchTab(newTabIndex - 1);
     }
 
     // Function to switch between tabs
@@ -145,14 +147,22 @@
       }
     }
 
-    // Function to navigate the current tab to a Bing search query
+    // Function to navigate the current tab to a URL or Bing search
     function navigate() {
       const input = document.getElementById("urlInput").value.trim();
       const iframe = document.getElementById(`iframe-${currentTabIndex}`);
 
       if (input) {
-        // Navigate Bing's homepage to the search query
-        iframe.src = `https://www.bing.com/search?q=${encodeURIComponent(input)}`;
+        // If it's a valid URL, load it; otherwise, perform a Bing search
+        const urlPattern = /^(https?:\/\/)?([a-zA-Z0-9.-]+)(\.[a-zA-Z]{2,})(\/.*)?$/;
+        if (urlPattern.test(input)) {
+          const formattedUrl = input.startsWith("http://") || input.startsWith("https://")
+            ? input
+            : `https://${input}`;
+          iframe.src = formattedUrl;
+        } else {
+          iframe.src = `https://www.bing.com/search?q=${encodeURIComponent(input)}`;
+        }
       }
     }
   </script>
