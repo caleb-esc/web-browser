@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Web Browser with Tabs (Bing Search)</title>
+  <title>Browser with Tabs (Internal Bing)</title>
   <style>
     body {
       margin: 0;
@@ -77,8 +77,8 @@
 
   <!-- Browser Header -->
   <div class="browser-header">
-    <input type="text" id="urlInput" placeholder="Enter Search Query or URL">
-    <button onclick="navigate()">Go</button>
+    <input type="text" id="urlInput" placeholder="Enter Search Query">
+    <button onclick="navigate()">Search</button>
     <button onclick="addTab()">New Tab</button>
     <button onclick="closeTab()">Close Tab</button>
   </div>
@@ -86,7 +86,7 @@
   <!-- Tab Content -->
   <div id="tabContentContainer">
     <div class="tab-content active">
-      <iframe class="iframe-container" src="https://www.bing.com"></iframe>
+      <iframe class="iframe-container" src="https://www.bing.com" id="iframe-0"></iframe>
     </div>
   </div>
 
@@ -109,7 +109,7 @@
       // Create new tab content with Bing's homepage
       const newTabContent = document.createElement("div");
       newTabContent.className = "tab-content";
-      newTabContent.innerHTML = '<iframe class="iframe-container" src="https://www.bing.com"></iframe>';
+      newTabContent.innerHTML = `<iframe class="iframe-container" src="https://www.bing.com" id="iframe-${newTabIndex}"></iframe>`;
       tabContentContainer.appendChild(newTabContent);
 
       // Switch to the new tab
@@ -145,13 +145,13 @@
       }
     }
 
-    // Function to navigate the current tab to a search query or URL
+    // Function to navigate the current tab to a Bing search query
     function navigate() {
       const input = document.getElementById("urlInput").value.trim();
-      const iframe = document.querySelectorAll(".tab-content")[currentTabIndex].querySelector("iframe");
+      const iframe = document.getElementById(`iframe-${currentTabIndex}`);
 
       if (input) {
-        // Perform Bing search
+        // Navigate Bing's homepage to the search query
         iframe.src = `https://www.bing.com/search?q=${encodeURIComponent(input)}`;
       }
     }
