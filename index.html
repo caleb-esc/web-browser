@@ -86,7 +86,7 @@
   <!-- Tab Content -->
   <div id="tabContentContainer">
     <div class="tab-content active">
-      <iframe class="iframe-container" src="https://www.bing.com" id="iframe-0"></iframe>
+      <iframe class="iframe-container" src="https://www.bing.com" id="iframe-0" onload="setupIframe(0)"></iframe>
     </div>
   </div>
 
@@ -111,7 +111,7 @@
       const newTabContent = document.createElement("div");
       newTabContent.className = "tab-content";
       newTabContent.id = `tab-${newTabIndex - 1}`;
-      newTabContent.innerHTML = `<iframe class="iframe-container" src="https://www.bing.com" id="iframe-${newTabIndex - 1}"></iframe>`;
+      newTabContent.innerHTML = `<iframe class="iframe-container" src="https://www.bing.com" id="iframe-${newTabIndex - 1}" onload="setupIframe(${newTabIndex - 1})"></iframe>`;
       tabContentContainer.appendChild(newTabContent);
 
       // Switch to the new tab
@@ -169,6 +169,26 @@
           iframe.src = `https://www.bing.com/search?q=${encodeURIComponent(input)}`; // Perform a Bing search
         }
       }
+    }
+
+    // Setup iframe behavior to handle clicks inside the iframe
+    function setupIframe(index) {
+      const iframe = document.getElementById(`iframe-${index}`);
+
+      // Add event listener for clicks on links inside the iframe
+      iframe.onload = function () {
+        const iframeDocument = iframe.contentWindow.document;
+
+        // Intercept clicks on the iframe and open links in the same tab (iframe)
+        iframeDocument.addEventListener("click", function (event) {
+          const target = event.target;
+
+          if (target.tagName === "A" && target.href) {
+            event.preventDefault(); // Prevent default navigation behavior
+            iframe.src = target.href; // Set iframe's src to the clicked link
+          }
+        });
+      };
     }
   </script>
 </body>
