@@ -77,7 +77,7 @@
 
   <!-- Browser Header -->
   <div class="browser-header">
-    <input type="text" id="urlInput" placeholder="Enter Search Query or URL">
+    <input type="text" id="urlInput" placeholder="Enter URL or Search Query">
     <button onclick="navigate()">Go</button>
     <button onclick="addTab()">New Tab</button>
     <button onclick="closeTab()">Close Tab</button>
@@ -147,7 +147,7 @@
       }
     }
 
-    // Function to navigate the current tab to a URL or Bing search
+    // Function to navigate the current tab to a URL or search query
     function navigate() {
       const input = document.getElementById("urlInput").value.trim();
       const iframe = document.getElementById(`iframe-${currentTabIndex}`);
