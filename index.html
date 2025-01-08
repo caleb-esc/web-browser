@@ -153,15 +153,20 @@
       const iframe = document.getElementById(`iframe-${currentTabIndex}`);
 
       if (input) {
-        // If it's a valid URL, load it; otherwise, perform a Bing search
+        // Check if the input is a URL
+        let formattedUrl = input;
+
+        // If the URL does not include http or https, add https://
+        if (!/^https?:\/\//i.test(input)) {
+          formattedUrl = "https://" + input;
+        }
+
+        // Validate if it looks like a URL
         const urlPattern = /^(https?:\/\/)?([a-zA-Z0-9.-]+)(\.[a-zA-Z]{2,})(\/.*)?$/;
-        if (urlPattern.test(input)) {
-          const formattedUrl = input.startsWith("http://") || input.startsWith("https://")
-            ? input
-            : `https://${input}`;
-          iframe.src = formattedUrl;
+        if (urlPattern.test(formattedUrl)) {
+          iframe.src = formattedUrl; // Open the URL in the current tab
         } else {
-          iframe.src = `https://www.bing.com/search?q=${encodeURIComponent(input)}`;
+          iframe.src = `https://www.bing.com/search?q=${encodeURIComponent(input)}`; // Perform a Bing search
         }
       }
     }
