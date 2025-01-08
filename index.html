@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web Browser with Tabs (Bing Search)</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+    .tabs {
+      display: flex;
+      background-color: #2c3e50;
+      color: white;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .tabs li {
+      flex: 1;
+      text-align: center;
+      padding: 10px;
+      cursor: pointer;
+      border-right: 1px solid #34495e;
+    }
+    .tabs li.active {
+      background-color: #34495e;
+    }
+    .tabs li:last-child {
+      border-right: none;
+    }
+    .browser-header {
+      display: flex;
+      padding: 10px;
+      background-color: #ecf0f1;
+      border-bottom: 1px solid #bdc3c7;
+    }
+    .browser-header input {
+      flex: 1;
+      padding: 8px;
+      font-size: 16px;
+      border: 1px solid #bdc3c7;
+      border-radius: 3px;
+    }
+    .browser-header button {
+      margin-left: 10px;
+      padding: 8px 12px;
+      font-size: 16px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    .browser-header button:hover {
+      background-color: #2980b9;
+    }
+    .iframe-container {
+      width: 100%;
+      height: calc(100vh - 100px);
+      border: none;
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <!-- Tab Navigation -->
+  <ul class="tabs" id="tabList">
+    <li class="active" onclick="switchTab(0)">Tab 1</li>
+  </ul>
+
+  <!-- Browser Header -->
+  <div class="browser-header">
+    <input type="text" id="urlInput" placeholder="Enter Search Query or URL">
+    <button onclick="navigate()">Go</button>
+    <button onclick="addTab()">New Tab</button>
+    <button onclick="closeTab()">Close Tab</button>
+  </div>
+
+  <!-- Tab Content -->
+  <div id="tabContentContainer">
+    <div class="tab-content active">
+      <iframe class="iframe-container" src="https://www.bing.com"></iframe>
+    </div>
+  </div>
+
+  <script>
+    let currentTabIndex = 0;
+
+    // Function to add a new tab
+    function addTab() {
+      const tabList = document.getElementById("tabList");
+      const tabContentContainer = document.getElementById("tabContentContainer");
+
+      const newTabIndex = tabList.children.length;
+
+      // Create new tab in the navigation bar
+      const newTab = document.createElement("li");
+      newTab.textContent = `Tab ${newTabIndex + 1}`;
+      newTab.onclick = () => switchTab(newTabIndex);
+      tabList.appendChild(newTab);
+
+      // Create new tab content with Bing's homepage
+      const newTabContent = document.createElement("div");
+      newTabContent.className = "tab-content";
+      newTabContent.innerHTML = '<iframe class="iframe-container" src="https://www.bing.com"></iframe>';
+      tabContentContainer.appendChild(newTabContent);
+
+      // Switch to the new tab
+      switchTab(newTabIndex);
+    }
+
+    // Function to switch between tabs
+    function switchTab(index) {
+      const tabs = document.querySelectorAll(".tabs li");
+      const tabContents = document.querySelectorAll(".tab-content");
+
+      tabs.forEach((tab, i) => {
+        tab.classList.toggle("active", i === index);
+        tabContents[i].classList.toggle("active", i === index);
+      });
+
+      currentTabIndex = index;
+    }
+
+    // Function to close the current tab
+    function closeTab() {
+      const tabs = document.querySelectorAll(".tabs li");
+      const tabContents = document.querySelectorAll(".tab-content");
+
+      if (tabs.length > 1) {
+        tabs[currentTabIndex].remove();
+        tabContents[currentTabIndex].remove();
+
+        // Switch to the previous tab (or the first tab if the current tab is the first one)
+        switchTab(currentTabIndex > 0 ? currentTabIndex - 1 : 0);
+      } else {
+        alert("You cannot close the last tab.");
+      }
+    }
+
+    // Function to navigate the current tab to a search query or URL
+    function navigate() {
+      const input = document.getElementById("urlInput").value.trim();
+      const iframe = document.querySelectorAll(".tab-content")[currentTabIndex].querySelector("iframe");
+
+      if (input) {
+        // Perform Bing search
+        iframe.src = `https://www.bing.com/search?q=${encodeURIComponent(input)}`;
+      }
+    }
+  </script>
+</body>
+</html>
